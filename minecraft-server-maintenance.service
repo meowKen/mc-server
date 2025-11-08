@@ -1,0 +1,21 @@
+[Unit]
+Description=Minecraft Server Maintenance
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/minecraft-server-backup
+Restart=no
+StandardOutput=journal
+StandardError=journal
+User=root
+
+# Ensure service has access to system files
+SupplementaryGroups=adm
+
+# Log service messages to specific journal identifier
+SyslogIdentifier=ensure-network-connectivity
+
+[Install]
+WantedBy=multi-user.target

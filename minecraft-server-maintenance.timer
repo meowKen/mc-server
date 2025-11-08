@@ -1,0 +1,12 @@
+[Unit]
+Description=Minecraft Server Maintenance Timer
+Requires=minecraft-server-maintenance.service
+
+[Timer]
+OnCalendar=*-*-* 00:00:00 Europe/Paris
+# Ensure timer doesn't drift
+AccuracySec=1sec
+Persistent=true
+
+[Install]
+WantedBy=timers.target
