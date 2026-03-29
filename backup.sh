@@ -38,13 +38,6 @@ if [ ! -f "$docker_compose_file" ]; then
   exit 1
 fi
 
-server_data_directory="${minecraft_server_directory}/data"
-
-if [ ! -d "$server_data_directory" ]; then
-  echo "World directory does not exist: $server_data_directory"
-  exit 1
-fi
-
 backup_directory="${minecraft_server_directory}/backup"
 
 if [ ! -d "$backup_directory" ]; then
@@ -114,16 +107,15 @@ docker compose -f "$docker_compose_file" down || {
 }
 
 # Rotate backups: keep only the last 7 days
-find ./backup -type f -name "*.tar.gz" -mtime +7 -exec rm {} \;
+find "$backup_directory" -type f -name "*.tar.gz" -mtime +7 -exec rm {} \;
 
 info "Old backups rotated, creating new backup..."
 
 # Create a new backup
-tar -czf "$backup_directory"/data-"$current_date".tar.gz "${server_data_directory}" || {
+tar -czf "$backup_directory"/data-"$current_date".tar.gz -C "${minecraft_server_directory}" data || {
   error "Failed to create backup archive, error: $?";
   exit 1;
 }
-
 
 info "Backup created successfully: data-${current_date}.tar.gz"
 info "Starting minecraft server..."
